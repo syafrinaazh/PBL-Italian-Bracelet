@@ -28,7 +28,7 @@ export default function LoginAdminPage() {
 
     setMsg("");
     localStorage.setItem("isAdmin", "true");
-    router.push("/beranda");
+    router.push("/dashboard");
   }
 
   return (

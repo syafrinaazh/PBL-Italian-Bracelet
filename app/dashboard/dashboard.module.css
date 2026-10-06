@@ -1,0 +1,53 @@
+.dash{--brown:#5C3A32;--brown-dark:#4A2E27;--rose:#D9A89A;--bg:#FBF6F3;--text:#2B1B17;--muted:#8A736C;--line:#EFE3DD;
+  display:flex;min-height:100vh;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}
+.dash *{box-sizing:border-box}
+.dash a{text-decoration:none}
+
+.sidebar{width:230px;background:var(--brown);color:#fff;padding:28px 24px;display:flex;flex-direction:column;flex-shrink:0}
+.brand{font-size:11px;letter-spacing:.18em;font-weight:600;margin-bottom:36px}
+.nav a{display:block;padding:11px 14px;margin-bottom:6px;border-radius:8px;color:#fff;font-size:13px;opacity:.9}
+.nav a.active{background:var(--rose);color:var(--brown-dark);font-weight:600;opacity:1}
+.nav a:not(.active):hover{background:rgba(255,255,255,.08)}
+.logout{margin-top:auto;font-size:12px;color:#fff;padding:11px 14px;background:none;border:0;text-align:left;cursor:pointer}
+
+.main{flex:1;padding:22px 28px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.top h1{font-size:22px;font-weight:700}
+.admin{display:flex;align-items:center;gap:10px;font-size:11px}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--rose);color:var(--brown-dark);display:grid;place-items:center;font-weight:700;font-size:11px}
+
+.card{background:#fff;border-radius:12px;padding:16px 18px;box-shadow:0 1px 2px rgba(92,58,50,.05)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.statLabel{font-size:10px}
+.statValue{font-size:26px;font-weight:700;margin:6px 0 4px}
+.statSub{font-size:9px;color:var(--muted)}
+
+.charts{display:grid;grid-template-columns:1.9fr 1fr;gap:14px;margin-bottom:14px}
+.chartTitle{font-size:10px;margin-bottom:12px}
+.chart svg{width:100%;height:auto;display:block}
+.chart text{font-size:10px;fill:var(--muted);font-family:inherit}
+
+.tableHead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.tableHead h2{font-size:12px;font-weight:600}
+.tableHead a,.detail{font-size:10px;color:var(--muted);text-decoration:underline!important}
+.tableWrap{overflow-x:auto}
+.dash table{width:100%;border-collapse:collapse;font-size:10px}
+.dash th{text-align:left;font-weight:500;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+.dash td{padding:11px 10px;border-bottom:1px solid var(--line)}
+.dash tr:last-child td{border-bottom:0}
+.dash td:first-child{font-weight:600}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font-size:9px;font-weight:600}
+.baru{background:#E9D3CB;color:var(--brown)}
+.diproses{background:#F5E6B8;color:#7A5A12}
+.selesai{background:#CFE8CF;color:#2E6A34}
+
+@media(max-width:900px){
+  .dash{flex-direction:column}
+  .sidebar{width:100%;flex-direction:row;align-items:center;padding:14px 16px;gap:14px;overflow-x:auto}
+  .brand{margin:0;white-space:nowrap}
+  .nav{display:flex;gap:6px}
+  .nav a{margin:0;white-space:nowrap}
+  .logout{margin:0 0 0 auto}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .charts{grid-template-columns:1fr}
+}
