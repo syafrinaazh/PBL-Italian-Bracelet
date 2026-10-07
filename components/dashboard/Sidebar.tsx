@@ -11,11 +11,14 @@ export default function Sidebar() {
     <aside className={styles.sidebar}>
       <div className={styles.brand}>ITALIAN BRACELET</div>
       <nav className={styles.nav}>
-        {menu.map((m) => (
-          <Link key={m.href} href={m.href} className={pathname === m.href ? styles.active : ""}>
-            {m.label}
-          </Link>
-        ))}
+        {menu.map((m) => {
+          const isActive = pathname === m.href || pathname.startsWith(m.href + "/");
+          return (
+            <Link key={m.href} href={m.href} className={isActive ? styles.active : ""}>
+              {m.label}
+            </Link>
+          );
+        })}
       </nav>
       <Link href="/login" className={styles.logout}>Logout</Link>
     </aside>
