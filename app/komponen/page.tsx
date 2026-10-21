@@ -24,7 +24,7 @@ export default function KomponenPage() {
 
   function handleCardClick(id: string) {
     if (!deleteMode) {
-      router.push(`/komponen/${id}`);
+        router.push(`/komponen/${id}`);
       return;
     }
     setSelectedIds((prev) =>
