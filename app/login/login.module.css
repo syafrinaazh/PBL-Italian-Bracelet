@@ -1,59 +1,61 @@
 .page {
   --brown: #5c3d36;
   --mauve: #a98780;
-  --blush: #ddb8ae;
+  --blush: #d9b5aa;
   --rose: #8a625b;
-  --bg: #f5f5f5;
   --ink: #1a1a1a;
   --paper: #ffffff;
 
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
-  background: var(--bg);
   color: var(--ink);
-  padding: 12px;
   display: flex;
-  gap: 4px;
   min-height: 100vh;
+  background: var(--paper);
 }
 
 .page * {
   box-sizing: border-box;
 }
 
+/* ---------- Sisi kiri (hero) ---------- */
 .hero {
-  flex: 1.08;
+  flex: 1.1;
   background: var(--brown);
   color: #fff;
-  padding: 48px;
+  padding: 65px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: calc(100vh - 24px);
+  min-height: 100vh;
 }
 
 .brand {
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.14em;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
+}
+
+.mid {
+  margin-top: auto;
 }
 
 .swatches {
   display: flex;
-  gap: 8px;
-  margin-bottom: 36px;
+  gap: 12px;
+  margin-bottom: 32px;
 }
 
 .swatches span {
   width: 38px;
   height: 38px;
-  border: 2px solid #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
   border-radius: 8px;
 }
 
 .swatches .s2 {
-  background: var(--blush);
-  border-color: var(--blush);
+  background: #ddb8ae;
+  border-color: #ddb8ae;
 }
 
 .swatches .s5 {
@@ -62,63 +64,69 @@
 }
 
 .hero h1 {
-  font-size: clamp(32px, 3.6vw, 48px);
+  font-size: clamp(36px, 3.1vw, 60px);
   line-height: 1.08;
-  font-weight: 800;
-  max-width: 300px;
+  font-weight: 700;
+  max-width: 400px;
   margin: 0;
 }
 
 .hero p {
   font-size: 13px;
   line-height: 1.5;
-  margin: 18px 0 0;
-  max-width: 260px;
-  font-weight: 400;
+  font-weight: 600;
+  margin: 22px 0 0;
+  max-width: 400px;
 }
 
 .hero small {
-  font-size: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+  margin-top: 80px;
 }
 
-.mid {
-  margin-top: auto;
-  margin-bottom: auto;
-}
-
+/* ---------- Sisi kanan (panel + kartu) ---------- */
 .panel {
   flex: 1;
   background: var(--paper);
-  border: 1px solid #e3e3e3;
-  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 83px;
+  min-height: 100vh;
+}
+
+.card {
+  width: 100%;
+  max-width: 750px;
+  background: var(--blush);
+  border-radius: 8px;
+  padding: 56px 50px 100px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  padding: 64px 56px 56px;
-  min-height: calc(100vh - 24px);
 }
 
-.panel h2 {
-  font-size: 17px;
+.card h2 {
+  font-size: 18px;
   font-weight: 700;
-  margin: 0;
+  color: var(--brown);
+  margin: 0 0 58px;
 }
 
 .form {
   width: 100%;
-  max-width: 272px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 28px;
 }
 
 .field {
   position: relative;
   background: var(--mauve);
-  border-radius: 8px;
-  height: 50px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  border-radius: 4px;
+  height: 69px;
 }
 
 .field input {
@@ -128,28 +136,28 @@
   border: 0;
   outline: 0;
   color: #fff;
-  font-size: 11px;
-  padding: 0 16px;
+  font-size: 16px;
+  padding: 0 24px;
   font-family: inherit;
 }
 
 .pw input {
-  padding-left: 44px;
+  padding-left: 70px;
 }
 
 .field input::placeholder {
   color: #fff;
   opacity: 1;
-  font-size: 9px;
+  font-size: 15px;
 }
 
 .icon {
   position: absolute;
-  left: 14px;
+  left: 26px;
   top: 50%;
   transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
 
 .field:focus-within {
@@ -157,22 +165,31 @@
   outline-offset: 2px;
 }
 
+.msg {
+  font-size: 12px;
+  color: #8a2b1f;
+  min-height: 14px;
+  text-align: center;
+}
+
 .actions {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 23px;
 }
 
 .btn {
   width: 100%;
-  max-width: 356px;
-  height: 53px;
+  max-width: 608px;
+  height: 73px;
   background: var(--brown);
   color: #fff;
   border: 0;
   border-radius: 4px;
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 600;
   font-family: inherit;
   cursor: pointer;
 }
@@ -182,18 +199,12 @@
 }
 
 .btn:focus-visible {
-  outline: 3px solid var(--blush);
+  outline: 3px solid #fff;
   outline-offset: 2px;
 }
 
-.msg {
-  font-size: 10px;
-  color: #8a2b1f;
-  min-height: 12px;
-  text-align: center;
-}
-
-@media (max-width: 760px) {
+/* ---------- Layar kecil ---------- */
+@media (max-width: 860px) {
   .page {
     flex-direction: column;
   }
@@ -211,7 +222,15 @@
     margin: 36px 0;
   }
 
+  .hero small {
+    margin-top: 0;
+  }
+
   .panel {
-    gap: 40px;
+    padding: 32px 20px;
+  }
+
+  .card {
+    padding: 40px 24px 48px;
   }
 }

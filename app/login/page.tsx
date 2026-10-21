@@ -28,13 +28,13 @@ export default function LoginAdminPage() {
 
     setMsg("");
     localStorage.setItem("isAdmin", "true");
-    router.push("/beranda");
+    router.push("/dashboard");
   }
 
   return (
     <div className={styles.page}>
       <section className={styles.hero}>
-        <div className={styles.brand}>Italian Bracelet</div>
+        <div className={styles.brand}>Gelang Italia</div>
 
         <div className={styles.mid}>
           <div className={styles.swatches} aria-hidden="true">
@@ -56,46 +56,58 @@ export default function LoginAdminPage() {
       </section>
 
       <main className={styles.panel}>
-        <h2>Login</h2>
+        <div className={styles.card}>
+          <h2>Login</h2>
 
-        <form id="loginForm" className={styles.form} onSubmit={handleSubmit} noValidate>
-          <div className={styles.field}>
-            <input
-              type="text"
-              placeholder="Email/Username"
-              autoComplete="username"
-              aria-label="Email atau username"
-              value={user}
-              onChange={(e) => setUser(e.target.value)}
-            />
-          </div>
-
-          <div className={`${styles.field} ${styles.pw}`}>
-            <svg className={styles.icon} viewBox="0 0 24 24" fill="#fff" aria-hidden="true">
-              <path
-                d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1zm2 0h6V8a3 3 0 0 0-6 0v2z"
-                opacity=".95"
+          <form
+            id="loginForm"
+            className={styles.form}
+            onSubmit={handleSubmit}
+            noValidate
+          >
+            <div className={styles.field}>
+              <input
+                type="text"
+                placeholder="Email/Username"
+                autoComplete="username"
+                aria-label="Email atau username"
+                value={user}
+                onChange={(e) => setUser(e.target.value)}
               />
-            </svg>
-            <input
-              type="password"
-              placeholder="Password"
-              autoComplete="current-password"
-              aria-label="Password"
-              value={pass}
-              onChange={(e) => setPass(e.target.value)}
-            />
-          </div>
+            </div>
 
-          <div className={styles.msg} role="alert">
-            {msg}
-          </div>
-        </form>
+            <div className={`${styles.field} ${styles.pw}`}>
+              <svg
+                className={styles.icon}
+                viewBox="0 0 24 24"
+                fill="#fff"
+                aria-hidden="true"
+              >
+                <path
+                  d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1zm2 0h6V8a3 3 0 0 0-6 0v2z"
+                  opacity=".95"
+                />
+              </svg>
+              <input
+                type="password"
+                placeholder="Password"
+                autoComplete="current-password"
+                aria-label="Password"
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+              />
+            </div>
 
-        <div className={styles.actions}>
-          <button className={styles.btn} type="submit" form="loginForm">
-            Login
-          </button>
+            <div className={styles.msg} role="alert">
+              {msg}
+            </div>
+          </form>
+
+          <div className={styles.actions}>
+            <button className={styles.btn} type="submit" form="loginForm">
+              Login
+            </button>
+          </div>
         </div>
       </main>
     </div>
