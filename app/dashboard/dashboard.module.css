@@ -3,7 +3,22 @@
 .dash *{box-sizing:border-box}
 .dash a{text-decoration:none}
 
-.sidebar{width:230px;background:var(--brown);color:#fff;padding:28px 24px;display:flex;flex-direction:column;flex-shrink:0}
+/* ===== Sidebar (menempel di layar, tidak ikut scroll) ===== */
+.sidebar{
+  width:230px;
+  background:var(--brown);
+  color:#fff;
+  padding:28px 24px;
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+
+  position:sticky;
+  top:0;
+  height:100vh;
+  align-self:flex-start;
+  overflow-y:auto;
+}
 .brand{font-size:11px;letter-spacing:.18em;font-weight:600;margin-bottom:36px}
 .nav a{display:block;padding:11px 14px;margin-bottom:6px;border-radius:8px;color:#fff;font-size:13px;opacity:.9}
 .nav a.active{background:var(--rose);color:var(--brown-dark);font-weight:600;opacity:1}
@@ -11,6 +26,9 @@
 .logout{margin-top:auto;font-size:12px;color:#fff;padding:11px 14px;background:none;border:0;text-align:left;cursor:pointer}
 
 .main{flex:1;padding:22px 28px;min-width:0}
+/* padding lebih lega khusus halaman Komponen */
+.main:has(.compGrid){padding:32px 40px}
+
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
 .top h1{font-size:22px;font-weight:700}
 .admin{display:flex;align-items:center;gap:10px;font-size:11px}
@@ -43,13 +61,27 @@
 
 @media(max-width:900px){
   .dash{flex-direction:column}
-  .sidebar{width:100%;flex-direction:row;align-items:center;padding:14px 16px;gap:14px;overflow-x:auto}
+  .sidebar{
+    width:100%;
+    height:auto;
+    align-self:stretch;
+    position:sticky;
+    top:0;
+    z-index:50;
+    flex-direction:row;
+    align-items:center;
+    padding:14px 16px;
+    gap:14px;
+    overflow-x:auto;
+    overflow-y:hidden;
+  }
   .brand{margin:0;white-space:nowrap}
   .nav{display:flex;gap:6px}
   .nav a{margin:0;white-space:nowrap}
   .logout{margin:0 0 0 auto}
   .stats{grid-template-columns:repeat(2,1fr)}
   .charts{grid-template-columns:1fr}
+  .main:has(.compGrid){padding:22px 20px}
 }
 
 /* ===== Tombol berbentuk link ===== */
@@ -154,6 +186,7 @@
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+  margin-bottom: 32px;
 }
 
 .toolbar h1 { margin: 0; font-size: 20px; }
@@ -189,23 +222,23 @@
 .btnDanger { background: #b3382c; border-color: #b3382c; color: #ffffff; }
 .btnDanger:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.hint { margin: 0; font-size: 13px; color: #6b5a55; }
+.hint { margin: -12px 0 20px; font-size: 13px; color: #6b5a55; }
 .empty { text-align: center; color: #6b5a55; padding: 40px 0; }
 
 .compGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  gap: 28px;
 }
 
 .compCard {
   background: #ffffff;
   border: 2px solid transparent;
   border-radius: 16px;
-  padding: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .compSelectable { cursor: pointer; }
@@ -222,7 +255,18 @@
   overflow: hidden;
 }
 
-.compImg img { height: 80%; width: auto; object-fit: contain; }
+/* Menyamarkan kotak putih di sekitar gambar charm:
+   - multiply: putih menyatu dengan latar krem
+   - filter: piksel hampir putih dijadikan putih murni
+   - clip-path: memotong garis tipis di tepi gambar */
+.compImg img {
+  height: 80%;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  filter: brightness(1.06) contrast(1.05);
+  clip-path: inset(3%);
+}
 
 .compPlaceholder {
   width: 52px;
@@ -254,14 +298,15 @@
   justify-content: center;
 }
 
-.compName { font-size: 13px; font-weight: 600; margin-top: 4px; }
-.compMeta { font-size: 11px; color: #6b5a55; }
+.compName { font-size: 14px; font-weight: 600; margin-top: 8px; }
+.compMeta { font-size: 12px; color: #6b5a55; }
 
 .compFoot {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 11px;
+  font-size: 12px;
+  margin-top: 6px;
 }
 
 /* ===== Form tambah komponen ===== */
@@ -287,11 +332,11 @@
 }
 
 @media (max-width: 1100px) {
-  .compGrid { grid-template-columns: repeat(3, 1fr); }
+  .compGrid { grid-template-columns: repeat(3, 1fr); gap: 24px; }
 }
 
 @media (max-width: 800px) {
-  .compGrid { grid-template-columns: repeat(2, 1fr); }
+  .compGrid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
 }
 
 /* ===== Halaman Detail Komponen ===== */

@@ -6,6 +6,9 @@
   --ink: #1a1a1a;
   --paper: #ffffff;
 
+  /* 1 unit = 1px di layar 1920px, mengecil proporsional di layar lebih kecil */
+  --u: calc(100vw / 1920);
+
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   color: var(--ink);
   display: flex;
@@ -22,7 +25,7 @@
   flex: 1.1;
   background: var(--brown);
   color: #fff;
-  padding: 65px;
+  padding: calc(80 * var(--u));
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -30,27 +33,23 @@
 }
 
 .brand {
-  font-size: 13px;
+  font-size: max(10px, calc(13 * var(--u)));
   letter-spacing: 0.14em;
   font-weight: 700;
   text-transform: uppercase;
 }
 
-.mid {
-  margin-top: auto;
-}
-
 .swatches {
   display: flex;
-  gap: 12px;
-  margin-bottom: 32px;
+  gap: calc(8 * var(--u));
+  margin-bottom: calc(40 * var(--u));
 }
 
 .swatches span {
-  width: 38px;
-  height: 38px;
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  border-radius: 8px;
+  width: calc(64 * var(--u));
+  height: calc(64 * var(--u));
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: calc(14 * var(--u));
 }
 
 .swatches .s2 {
@@ -64,26 +63,25 @@
 }
 
 .hero h1 {
-  font-size: clamp(36px, 3.1vw, 60px);
+  font-size: max(28px, calc(59 * var(--u)));
   line-height: 1.08;
   font-weight: 700;
-  max-width: 400px;
+  max-width: calc(400 * var(--u));
   margin: 0;
 }
 
 .hero p {
-  font-size: 13px;
-  line-height: 1.5;
-  font-weight: 600;
-  margin: 22px 0 0;
-  max-width: 400px;
+  font-size: max(12px, calc(18 * var(--u)));
+  line-height: 1.6;
+  font-weight: 400;
+  margin: calc(22 * var(--u)) 0 0;
+  max-width: calc(400 * var(--u));
 }
 
 .hero small {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: max(10px, calc(14 * var(--u)));
+  font-weight: 400;
   opacity: 0.85;
-  margin-top: 80px;
 }
 
 /* ---------- Sisi kanan (panel + kartu) ---------- */
@@ -93,40 +91,41 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 83px;
+  padding: calc(40 * var(--u)) calc(83 * var(--u));
   min-height: 100vh;
 }
 
 .card {
   width: 100%;
-  max-width: 750px;
-  background: var(--blush);
+  max-width: calc(620 * var(--u));
+  background: #f2e4e0;
   border-radius: 8px;
-  padding: 56px 50px 100px;
+  padding: calc(56 * var(--u)) calc(50 * var(--u)) calc(73 * var(--u));
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .card h2 {
-  font-size: 18px;
+  font-size: max(16px, calc(28 * var(--u)));
   font-weight: 700;
-  color: var(--brown);
-  margin: 0 0 58px;
+  color: var(--ink);
+  margin: 0 0 calc(46 * var(--u));
 }
 
 .form {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: calc(38 * var(--u));
 }
 
 .field {
   position: relative;
   background: var(--mauve);
   border-radius: 4px;
-  height: 69px;
+  height: calc(92 * var(--u));
+  min-height: 44px;
 }
 
 .field input {
@@ -134,30 +133,36 @@
   height: 100%;
   background: transparent;
   border: 0;
+  border-radius: inherit;
   outline: 0;
   color: #fff;
-  font-size: 16px;
-  padding: 0 24px;
+  font-size: max(14px, calc(22 * var(--u)));
+  padding: 0 calc(32 * var(--u));
   font-family: inherit;
 }
 
 .pw input {
-  padding-left: 70px;
+  padding-left: calc(32 * var(--u));
 }
 
 .field input::placeholder {
   color: #fff;
   opacity: 1;
-  font-size: 15px;
+  font-size: max(14px, calc(22 * var(--u)));
+}
+
+/* Fix autofill Chrome (biar tidak jadi biru muda) */
+.field input:-webkit-autofill,
+.field input:-webkit-autofill:hover,
+.field input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  caret-color: #fff;
+  box-shadow: 0 0 0 1000px var(--mauve) inset;
+  transition: background-color 9999s ease-in-out 0s;
 }
 
 .icon {
-  position: absolute;
-  left: 26px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 22px;
-  height: 22px;
+  display: none;
 }
 
 .field:focus-within {
@@ -172,23 +177,28 @@
   text-align: center;
 }
 
+.msg:empty {
+  display: none;
+}
+
 .actions {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 23px;
+  margin-top: calc(35 * var(--u));
 }
 
 .btn {
   width: 100%;
-  max-width: 608px;
-  height: 73px;
+  max-width: calc(455 * var(--u));
+  height: calc(96 * var(--u));
+  min-height: 44px;
   background: var(--brown);
   color: #fff;
   border: 0;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: max(14px, calc(24 * var(--u)));
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
@@ -206,6 +216,7 @@
 /* ---------- Layar kecil ---------- */
 @media (max-width: 860px) {
   .page {
+    --u: 1px;
     flex-direction: column;
   }
 
@@ -218,12 +229,23 @@
     padding: 32px;
   }
 
-  .mid {
+  .hero .mid {
     margin: 36px 0;
   }
 
-  .hero small {
-    margin-top: 0;
+  .swatches span {
+    width: 40px;
+    height: 40px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+    max-width: 400px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    max-width: 400px;
   }
 
   .panel {
@@ -231,6 +253,31 @@
   }
 
   .card {
+    max-width: 620px;
     padding: 40px 24px 48px;
+  }
+
+  .card h2 {
+    font-size: 22px;
+    margin-bottom: 32px;
+  }
+
+  .form {
+    gap: 20px;
+  }
+
+  .field {
+    height: 56px;
+  }
+
+  .field input,
+  .field input::placeholder {
+    font-size: 16px;
+  }
+
+  .btn {
+    max-width: 100%;
+    height: 56px;
+    font-size: 18px;
   }
 }
