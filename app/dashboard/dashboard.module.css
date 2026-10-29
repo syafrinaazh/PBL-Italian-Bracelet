@@ -457,10 +457,15 @@
 
 .searchWide { min-width: 260px; }
 
+.toolbarTight {
+  margin-bottom: 12px;
+}
+
 .pills {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  margin-bottom: 24px;
 }
 
 .pill {
@@ -474,15 +479,15 @@
 
 .pillAll { background: #ecd5d0; color: #5a3a32; }
 .pillBaru { background: #ecd5d0; color: #5a3a32; }
-.pillProses { background: #f5e6b8; color: #6b5416; }
-.pillSelesai { background: #cfe8d3; color: #24562f; }
+.pillProses { background: #ecd5d0; color: #5a3a32; }
+.pillSelesai { background: #ecd5d0; color: #5a3a32; }
 
-.pillAll.pillActive {
+/* aktif: berlaku untuk SEMUA tombol */
+.pill.pillActive {
   background: #5c3a32;
   color: #ffffff;
+  border-color: #5c3a32;
 }
-
-.pill.pillActive { border-color: #5c3a32; }
 
 .charmCell {
   display: flex;

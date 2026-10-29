@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "@/app/dashboard/dashboard.module.css";
 import { menu } from "@/lib/data";
+import LogoutButton from "./LogoutButton";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -20,7 +21,7 @@ export default function Sidebar() {
           );
         })}
       </nav>
-      <Link href="/login" className={styles.logout}>Logout</Link>
+      <LogoutButton />
     </aside>
   );
 }

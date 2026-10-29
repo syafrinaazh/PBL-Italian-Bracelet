@@ -51,7 +51,7 @@ export default function OrdersListTable({ list, onDetail }: OrdersListTableProps
             <th>Charm</th>
             <th>Total</th>
             <th>Status</th>
-            <th></th>
+            <th>Aksi</th>
           </tr>
         </thead>
         <tbody>

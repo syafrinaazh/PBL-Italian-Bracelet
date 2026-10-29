@@ -2,114 +2,135 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Cormorant_Garamond } from "next/font/google";
 import styles from "./login.module.css";
 
 const ADMIN_EMAIL = "adminitabracelet@gmail.com";
 const ADMIN_PASSWORD = "Bracelet123#";
 
-export default function LoginAdminPage() {
+const display = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
+/* ---------- Halaman login ---------- */
+export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
-  const [user, setUser] = useState("");
-  const [pass, setPass] = useState("");
-  const [msg, setMsg] = useState("");
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    if (!user.trim() || !pass) {
-      setMsg("Isi email/username dan password dulu.");
-      return;
+    if (
+      email.trim().toLowerCase() === ADMIN_EMAIL &&
+      password === ADMIN_PASSWORD
+    ) {
+      router.push("/dashboard"); // ganti ke halaman tujuan setelah login
+    } else {
+      setError("Email atau password salah. Coba periksa lagi.");
+      setLoading(false);
     }
-
-    if (user.trim() !== ADMIN_EMAIL || pass !== ADMIN_PASSWORD) {
-      setMsg("Email/username atau password salah.");
-      return;
-    }
-
-    setMsg("");
-    localStorage.setItem("isAdmin", "true");
-    router.push("/dashboard");
   }
 
   return (
-    <div className={styles.page}>
-      <section className={styles.hero}>
-        <div className={styles.brand}>Gelang Italia</div>
+    <main className={styles.page}>
+      <section className={styles.shell}>
+        {/* Panel kiri: foto + brand */}
+        <aside className={styles.hero}>
+          <Image
+            src="/login-bracelet.jpeg"
+            alt="Italian bracelet emas dengan charm di tepi laut"
+            fill
+            priority
+            sizes="(max-width: 900px) 100vw, 55vw"
+            className={styles.heroImg}
+          />
+          <div className={styles.overlay} />
 
-        <div className={styles.mid}>
-          <div className={styles.swatches} aria-hidden="true">
-            <span></span>
-            <span className={styles.s2}></span>
-            <span></span>
-            <span></span>
-            <span className={styles.s5}></span>
-            <span></span>
+          <p className={styles.brand}>Italian Bracelet</p>
+
+          <div className={styles.copy}>
+            <h1 className={`${styles.title} ${display.className}`}>
+              Kelola toko gelang custom-mu.
+            </h1>
+            <p className={styles.sub}>
+              Pantau pesanan, atur stok charm, dan lihat laporan penjualan dalam
+              satu panel.
+            </p>
           </div>
-          <h1>Kelola toko gelang custom-mu.</h1>
-          <p>
-            Pantau pesanan, atur stok charm, dan lihat laporan penjualan dalam
-            satu panel.
-          </p>
-        </div>
 
-        <small>Panel khusus admin</small>
-      </section>
+          <p className={styles.note}>Panel khusus admin</p>
+        </aside>
 
-      <main className={styles.panel}>
-        <div className={styles.card}>
-          <h2>Login</h2>
+        {/* Panel kanan: form */}
+        <div className={styles.formSide}>
+          <form className={styles.form} onSubmit={handleSubmit}>
+            <h2 className={`${styles.formTitle} ${display.className}`}>
+              Selamat datang kembali
+            </h2>
+            <p className={styles.formSub}>
+              Masuk untuk membuka dashboard toko.
+            </p>
 
-          <form
-            id="loginForm"
-            className={styles.form}
-            onSubmit={handleSubmit}
-            noValidate
-          >
-            <div className={styles.field}>
+            <label className={styles.label} htmlFor="email">
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              className={styles.input}
+              placeholder="nama@email.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+              suppressHydrationWarning
+            />
+
+            <label className={styles.label} htmlFor="password">
+              Password
+            </label>
+            <div className={styles.passwordWrap}>
               <input
-                type="text"
-                placeholder="Email/Username"
-                autoComplete="username"
-                aria-label="Email atau username"
-                value={user}
-                onChange={(e) => setUser(e.target.value)}
-              />
-            </div>
-
-            <div className={`${styles.field} ${styles.pw}`}>
-              <svg
-                className={styles.icon}
-                viewBox="0 0 24 24"
-                fill="#fff"
-                aria-hidden="true"
-              >
-                <path
-                  d="M7 10V8a5 5 0 0 1 10 0v2h1a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-9a1 1 0 0 1 1-1h1zm2 0h6V8a3 3 0 0 0-6 0v2z"
-                  opacity=".95"
-                />
-              </svg>
-              <input
-                type="password"
-                placeholder="Password"
+                id="password"
+                type={show ? "text" : "password"}
+                className={styles.input}
+                placeholder="Masukkan password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
-                aria-label="Password"
-                value={pass}
-                onChange={(e) => setPass(e.target.value)}
+                required
+                suppressHydrationWarning
               />
+              <button
+                type="button"
+                className={styles.toggle}
+                onClick={() => setShow((s) => !s)}
+                aria-label={show ? "Sembunyikan password" : "Tampilkan password"}
+              >
+                {show ? "Sembunyikan" : "Lihat"}
+              </button>
             </div>
 
-            <div className={styles.msg} role="alert">
-              {msg}
-            </div>
-          </form>
+            {error && (
+              <p className={styles.error} role="alert">
+                {error}
+              </p>
+            )}
 
-          <div className={styles.actions}>
-            <button className={styles.btn} type="submit" form="loginForm">
-              Login
+            <button type="submit" className={styles.submit} disabled={loading}>
+              {loading ? "Memproses..." : "Login"}
             </button>
-          </div>
+          </form>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }

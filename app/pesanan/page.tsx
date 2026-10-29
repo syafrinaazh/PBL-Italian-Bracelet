@@ -68,7 +68,7 @@ export default function PesananPage() {
     <div className={styles.dash}>
       <Sidebar />
       <main className={styles.main}>
-        <header className={styles.toolbar}>
+        <header className={`${styles.toolbar} ${styles.toolbarTight}`}>
           <h1>Manajemen Pesanan</h1>
           <div className={styles.toolbarActions}>
             <input
