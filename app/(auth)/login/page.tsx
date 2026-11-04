@@ -6,9 +6,6 @@ import Image from "next/image";
 import { Cormorant_Garamond } from "next/font/google";
 import styles from "./login.module.css";
 
-const ADMIN_EMAIL = "adminitabracelet@gmail.com";
-const ADMIN_PASSWORD = "Bracelet123#";
-
 const display = Cormorant_Garamond({
   subsets: ["latin"],
   weight: ["500", "600", "700"],
@@ -23,18 +20,28 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    if (
-      email.trim().toLowerCase() === ADMIN_EMAIL &&
-      password === ADMIN_PASSWORD
-    ) {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
+      });
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        setError(data?.message ?? "Login gagal. Coba lagi.");
+        setLoading(false);
+        return;
+      }
+
       router.push("/dashboard"); // ganti ke halaman tujuan setelah login
-    } else {
-      setError("Email atau password salah. Coba periksa lagi.");
+    } catch {
+      setError("Tidak bisa terhubung ke server. Coba lagi.");
       setLoading(false);
     }
   }
