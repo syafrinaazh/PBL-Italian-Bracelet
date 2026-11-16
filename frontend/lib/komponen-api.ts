@@ -56,3 +56,25 @@ export async function createKomponen(
 export async function deleteKomponen(id: string): Promise<void> {
   await parse(await fetch(`/api/products/${id}`, { method: "DELETE" }));
 }
+
+export async function fetchKomponenById(id: string): Promise<Komponen> {
+  return toKomponen(await parse(await fetch(`/api/products/${id}`)));
+}
+
+export async function updateKomponen(
+  id: string,
+  item: Partial<Omit<Komponen, "id">>,
+  imageFile: File | null
+): Promise<Komponen> {
+  const form = new FormData();
+  if (item.name !== undefined) form.append("name", item.name);
+  if (item.category !== undefined) form.append("category", item.category);
+  if (item.price !== undefined) form.append("price", String(item.price));
+  if (item.stock !== undefined) form.append("stock", String(item.stock));
+  if (item.description !== undefined) form.append("description", item.description);
+  if (imageFile) form.append("image", imageFile);
+  return toKomponen(
+    await parse(await fetch(`/api/products/${id}`, { method: "PUT", body: form }))
+  );
+}
+

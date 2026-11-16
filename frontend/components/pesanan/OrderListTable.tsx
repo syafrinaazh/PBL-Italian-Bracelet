@@ -2,7 +2,6 @@
 
 import styles from "@/app/dashboard/dashboard.module.css";
 import type { Order } from "@/types/order";
-import { komponenList } from "@/lib/komponen-data";
 import StatusBadge from "@/components/dashboard/StatusBadge";
 
 type OrdersListTableProps = {
@@ -10,30 +9,27 @@ type OrdersListTableProps = {
   onDetail: (o: Order) => void;
 };
 
-function imageOf(name: string) {
-  return komponenList.find((k) => k.name === name)?.image;
-}
-
 function CharmThumbs({ order }: { order: Order }) {
   const thumbs = order.charms.flatMap((c) =>
-    Array.from({ length: c.qty }, (_, i) => ({ key: `${c.name}-${i}`, name: c.name }))
+    Array.from({ length: c.qty }, (_, i) => ({
+      key: `${c.name}-${i}`,
+      name: c.name,
+      src: c.image,
+    }))
   );
 
   return (
     <div className={styles.charmCell}>
-      {thumbs.map((t) => {
-        const src = imageOf(t.name);
-        return (
-          <span key={t.key} className={styles.charmThumb} title={t.name}>
-            {src ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={src} alt={t.name} />
-            ) : (
-              t.name.charAt(0)
-            )}
-          </span>
-        );
-      })}
+      {thumbs.map((t) => (
+        <span key={t.key} className={styles.charmThumb} title={t.name}>
+          {t.src ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={t.src} alt={t.name} />
+          ) : (
+            t.name.charAt(0)
+          )}
+        </span>
+      ))}
       <span className={styles.charmCount}>{order.item}</span>
     </div>
   );

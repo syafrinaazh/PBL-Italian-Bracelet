@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import styles from "@/app/dashboard/dashboard.module.css";
-import { orders as initialOrders, orderTotals } from "@/lib/data";
 import type { Order } from "@/types/order";
+import { fetchOrders, updateOrderStatus } from "@/lib/order-api";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Modal from "@/components/dashboard/Modal";
 import OrderDetail from "@/components/dashboard/OrderDetail";
@@ -20,10 +20,29 @@ const PILL_CLASS: Record<string, string> = {
 };
 
 export default function PesananPage() {
-  const [orders, setOrders] = useState<Order[]>(initialOrders);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState("Semua");
   const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchOrders()
+      .then((data) => {
+        if (!cancelled) setOrders(data);
+      })
+      .catch((e) => {
+        if (!cancelled) setLoadError(e instanceof Error ? e.message : "Gagal memuat pesanan.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const selected = orders.find((o) => o.id === selectedId) ?? null;
 
@@ -35,25 +54,18 @@ export default function PesananPage() {
     return matchQuery && matchTab;
   });
 
-  /* Angka tab dari total desain, lalu disesuaikan kalau status ada yang diubah */
   function countOf(t: string) {
-    if (t === "Semua") return orderTotals.Semua;
-    let n = orderTotals[t];
-    orders.forEach((o) => {
-      const first = initialOrders.find((x) => x.id === o.id)?.status;
-      if (first && first !== o.status) {
-        if (first === t) n--;
-        if (o.status === t) n++;
-      }
-    });
-    return n;
+    return t === "Semua" ? orders.length : orders.filter((o) => o.status === t).length;
   }
 
-  function handleSave(status: string) {
+  async function handleSave(status: string) {
     if (!selectedId) return;
-    setOrders((prev) =>
-      prev.map((o) => (o.id === selectedId ? { ...o, status } : o))
-    );
+    try {
+      const updated = await updateOrderStatus(selectedId, status);
+      setOrders((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+    } catch (e) {
+      window.alert(e instanceof Error ? e.message : "Gagal mengubah status.");
+    }
   }
 
   useEffect(() => {
@@ -95,7 +107,11 @@ export default function PesananPage() {
         </div>
 
         <section className={styles.card}>
-          {filtered.length === 0 ? (
+          {loading ? (
+            <p className={styles.empty}>Memuat pesanan...</p>
+          ) : loadError ? (
+            <p className={styles.empty}>{loadError}</p>
+          ) : filtered.length === 0 ? (
             <p className={styles.empty}>Pesanan tidak ditemukan.</p>
           ) : (
             <OrdersListTable list={filtered} onDetail={(o) => setSelectedId(o.id)} />

@@ -29,7 +29,8 @@ router.post('/login', async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
-  res.clearCookie('token', { path: '/' });
+  const { maxAge, ...opts } = COOKIE_OPTIONS;
+  res.clearCookie('token', { ...opts, path: '/' });
   res.json({ message: 'Berhasil logout' });
 });
 
@@ -40,3 +41,4 @@ router.get('/me', auth, async (req, res) => {
 });
 
 module.exports = router;
+

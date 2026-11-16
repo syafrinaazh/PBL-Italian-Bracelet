@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import styles from "./dashboard.module.css";
-import { orders } from "@/lib/data";
 import type { Order } from "@/types/order";
+import { fetchOrders } from "@/lib/order-api";
+import { fetchDashboard, type DashboardData } from "@/lib/stats-api";
 import Sidebar from "@/components/dashboard/Sidebar";
 import StatsCards from "@/components/dashboard/StatsCards";
 import RevenueChart from "@/components/dashboard/RevenueChart";
@@ -13,8 +14,31 @@ import OrderDetail from "@/components/dashboard/OrderDetail";
 import Modal from "@/components/dashboard/Modal";
 
 export default function DashboardPage() {
+  const [data, setData] = useState<DashboardData | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [showAll, setShowAll] = useState(false);
   const [selected, setSelected] = useState<Order | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([fetchDashboard(), fetchOrders()])
+      .then(([d, o]) => {
+        if (cancelled) return;
+        setData(d);
+        setOrders(o);
+      })
+      .catch((e) => {
+        if (!cancelled) setLoadError(e instanceof Error ? e.message : "Gagal memuat dashboard.");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -35,26 +59,34 @@ export default function DashboardPage() {
           <div className={styles.admin}><span>Admin Toko</span><div className={styles.avatar}>A</div></div>
         </header>
 
-        <StatsCards />
+        {loading ? (
+          <p className={styles.empty}>Memuat dashboard...</p>
+        ) : loadError || !data ? (
+          <p className={styles.empty}>{loadError || "Data tidak tersedia."}</p>
+        ) : (
+          <>
+            <StatsCards stats={data.stats} />
 
-        <section className={styles.charts}>
-          <div className={`${styles.card} ${styles.chart}`}>
-            <div className={styles.chartTitle}>Pendapatan 7 hari terakhir (Rp ribu)</div>
-            <RevenueChart />
-          </div>
-          <div className={`${styles.card} ${styles.chart}`}>
-            <div className={styles.chartTitle}>Charm terlaris (terjual)</div>
-            <BestSellerChart />
-          </div>
-        </section>
+            <section className={styles.charts}>
+              <div className={`${styles.card} ${styles.chart}`}>
+                <div className={styles.chartTitle}>Pendapatan 7 hari terakhir (Rp ribu)</div>
+                <RevenueChart revenue={data.revenue} />
+              </div>
+              <div className={`${styles.card} ${styles.chart}`}>
+                <div className={styles.chartTitle}>Charm terlaris (terjual)</div>
+                <BestSellerChart charms={data.charms} />
+              </div>
+            </section>
 
-        <section className={styles.card}>
-          <div className={styles.tableHead}>
-            <h2>Pesanan terbaru</h2>
-            <button className={styles.linkBtn} onClick={() => setShowAll(true)}>Lihat semua</button>
-          </div>
-          <OrdersTable list={orders.slice(0, 4)} onDetail={setSelected} />
-        </section>
+            <section className={styles.card}>
+              <div className={styles.tableHead}>
+                <h2>Pesanan terbaru</h2>
+                <button className={styles.linkBtn} onClick={() => setShowAll(true)}>Lihat semua</button>
+              </div>
+              <OrdersTable list={orders.slice(0, 4)} onDetail={setSelected} />
+            </section>
+          </>
+        )}
       </main>
 
       {showAll && (

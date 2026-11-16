@@ -2,18 +2,26 @@
 
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { useRouter } from "next/navigation";
 import styles from "@/app/dashboard/dashboard.module.css";
 import Modal from "./Modal";
 
 export default function LogoutButton() {
-  const router = useRouter();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogout = () => {
-    // localStorage.removeItem("token"); // aktifkan kalau login-mu pakai token
-    setShowConfirm(false);
-    router.replace("/login");
+  const handleLogout = async () => {
+    setLoading(true);
+    try {
+      // minta backend menghapus cookie token
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } finally {
+      setShowConfirm(false);
+      // reload penuh supaya cache router bersih dan proxy.ts baca cookie terbaru
+      window.location.href = "/login";
+    }
   };
 
   return (
@@ -42,6 +50,7 @@ export default function LogoutButton() {
                 type="button"
                 className={styles.btnGhost}
                 onClick={() => setShowConfirm(false)}
+                disabled={loading}
               >
                 Tidak
               </button>
@@ -49,8 +58,9 @@ export default function LogoutButton() {
                 type="button"
                 className={styles.btnPrimary}
                 onClick={handleLogout}
+                disabled={loading}
               >
-                Iya
+                {loading ? "Keluar..." : "Iya"}
               </button>
             </div>
           </Modal>,

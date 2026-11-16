@@ -8,5 +8,5 @@ export type Order = {
   phone: string;
   address: string;
   payment: string;
-  charms: { name: string; qty: number }[];
+  charms: { name: string; qty: number; image?: string }[];
 };

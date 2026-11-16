@@ -1,7 +1,7 @@
 import styles from "@/app/dashboard/dashboard.module.css";
-import { stats } from "@/lib/data";
+import type { Stat } from "@/lib/stats-api";
 
-export default function StatsCards() {
+export default function StatsCards({ stats }: { stats: Stat[] }) {
   return (
     <section className={styles.stats}>
       {stats.map((s) => (

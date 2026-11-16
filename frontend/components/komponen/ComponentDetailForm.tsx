@@ -6,9 +6,11 @@ import type { Komponen } from "@/types/komponen";
 
 type ComponentDetailFormProps = {
   item: Komponen;
-  onSave: (data: Komponen) => void;
+  onSave: (data: Komponen, imageFile: File | null) => Promise<void> | void;
   onCancel: () => void;
 };
+
+const BASE_CATEGORIES = ["Charm", "Tali", "Pengait"];
 
 export default function ComponentDetailForm({ item, onSave, onCancel }: ComponentDetailFormProps) {
   const [name, setName] = useState(item.name);
@@ -16,21 +18,25 @@ export default function ComponentDetailForm({ item, onSave, onCancel }: Componen
   const [category, setCategory] = useState(item.category);
   const [price, setPrice] = useState(String(item.price));
   const [description, setDescription] = useState(item.description ?? "");
-  const [images, setImages] = useState<string[]>(item.images ?? (item.image ? [item.image] : []));
+  const [preview, setPreview] = useState<string | null>(item.image ?? null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [error, setError] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const categories = BASE_CATEGORIES.includes(item.category)
+    ? BASE_CATEGORIES
+    : [item.category, ...BASE_CATEGORIES];
 
   function handleUpload(e: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []);
-    const urls = files.map((f) => URL.createObjectURL(f));
-    setImages((prev) => [...prev, ...urls]);
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
     e.target.value = "";
   }
 
-  function removeImage(index: number) {
-    setImages((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const priceNum = Number(price);
@@ -40,8 +46,8 @@ export default function ComponentDetailForm({ item, onSave, onCancel }: Componen
       setError("Nama komponen wajib diisi.");
       return;
     }
-    if (stock === "" || Number.isNaN(stockNum) || stockNum < 0) {
-      setError("Jumlah stock harus berupa angka 0 atau lebih.");
+    if (stock === "" || Number.isNaN(stockNum) || stockNum < 0 || !Number.isInteger(stockNum)) {
+      setError("Jumlah stock harus berupa bilangan bulat 0 atau lebih.");
       return;
     }
     if (!price || Number.isNaN(priceNum) || priceNum <= 0) {
@@ -50,16 +56,25 @@ export default function ComponentDetailForm({ item, onSave, onCancel }: Componen
     }
 
     setError("");
-    onSave({
-      ...item,
-      name: name.trim(),
-      category,
-      price: priceNum,
-      stock: stockNum,
-      description: description.trim(),
-      images,
-      image: images[0],
-    });
+    setSaving(true);
+    try {
+      await onSave(
+        {
+          ...item,
+          name: name.trim(),
+          category,
+          price: priceNum,
+          stock: stockNum,
+          description: description.trim(),
+        },
+        imageFile
+      );
+      setImageFile(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal menyimpan perubahan.");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -92,9 +107,9 @@ export default function ComponentDetailForm({ item, onSave, onCancel }: Componen
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
-            <option>Charm</option>
-            <option>Tali</option>
-            <option>Pengait</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
           </select>
         </div>
         <div className={styles.dCol}>
@@ -121,32 +136,28 @@ export default function ComponentDetailForm({ item, onSave, onCancel }: Componen
 
       <span className={styles.fLabel}>Gambar</span>
       <div className={styles.gallery}>
-        {images.map((src, i) => (
-          <div key={`${src}-${i}`} className={styles.thumb}>
+        {preview && (
+          <div className={styles.thumb}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src} alt={`${name} ${i + 1}`} />
-            <button
-              type="button"
-              className={styles.thumbRemove}
-              onClick={() => removeImage(i)}
-              aria-label="Hapus gambar"
-            >
-              ×
-            </button>
+            <img src={preview} alt={name} />
           </div>
-        ))}
+        )}
         <label className={styles.upload}>
           <span>+</span>
-          <small>Upload gambar</small>
-          <input type="file" accept="image/*" multiple hidden onChange={handleUpload} />
+          <small>{preview ? "Ganti gambar" : "Upload gambar"}</small>
+          <input type="file" accept="image/*" hidden onChange={handleUpload} />
         </label>
       </div>
 
       {error && <p className={styles.fError}>{error}</p>}
 
       <div className={styles.dActions}>
-        <button type="submit" className={styles.btnPrimary}>Simpan</button>
-        <button type="button" className={styles.btnGhost} onClick={onCancel}>Batal</button>
+        <button type="submit" className={styles.btnPrimary} disabled={saving}>
+          {saving ? "Menyimpan..." : "Simpan"}
+        </button>
+        <button type="button" className={styles.btnGhost} onClick={onCancel} disabled={saving}>
+          Batal
+        </button>
       </div>
     </form>
   );

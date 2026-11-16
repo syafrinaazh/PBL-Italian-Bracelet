@@ -1,19 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import styles from "@/app/dashboard/dashboard.module.css";
-import { komponenList } from "@/lib/komponen-data";
+import type { Komponen } from "@/types/komponen";
+import { fetchKomponenById, updateKomponen } from "@/lib/komponen-api";
 import Sidebar from "@/components/dashboard/Sidebar";
 import ComponentDetailForm from "@/components/komponen/ComponentDetailForm";
 
 export default function DetailKomponenPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const [item, setItem] = useState<Komponen | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
 
-  const item = komponenList.find((k) => k.id === params.id);
+  useEffect(() => {
+    let cancelled = false;
+    fetchKomponenById(params.id)
+      .then((data) => {
+        if (!cancelled) setItem(data);
+      })
+      .catch((e) => {
+        if (!cancelled) {
+          setLoadError(e instanceof Error ? e.message : "Gagal memuat data.");
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id]);
+
+  async function handleSave(data: Komponen, imageFile: File | null) {
+    const { id, ...rest } = data;
+    const updated = await updateKomponen(id, rest, imageFile);
+    setItem(updated);
+    setNotice("Perubahan berhasil disimpan.");
+  }
 
   return (
     <div className={styles.dash}>
@@ -32,18 +60,21 @@ export default function DetailKomponenPage() {
           </div>
         </header>
 
-        {!item ? (
+        {loading ? (
           <section className={styles.card}>
-            <p className={styles.empty}>Komponen tidak ditemukan.</p>
+            <p className={styles.empty}>Memuat komponen...</p>
+          </section>
+        ) : loadError || !item ? (
+          <section className={styles.card}>
+            <p className={styles.empty}>{loadError || "Komponen tidak ditemukan."}</p>
           </section>
         ) : (
           <section className={`${styles.card} ${styles.detailCard}`}>
             {notice && <p className={styles.notice}>{notice}</p>}
             <ComponentDetailForm
+              key={`${item.id}-${item.image ?? ""}-${item.name}`}
               item={item}
-              onSave={() =>
-                setNotice("Perubahan berhasil disimpan (sementara, belum tersambung ke database).")
-              }
+              onSave={handleSave}
               onCancel={() => router.push("/komponen")}
             />
           </section>
