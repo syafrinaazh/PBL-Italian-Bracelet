@@ -1,16 +1,14 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import styles from "@/app/dashboard/dashboard.module.css";
 import type { Komponen } from "@/types/komponen";
+import ImageEnhancer from "./ImageEnhancer";
 
 type ComponentFormProps = {
   onSubmit: (data: Omit<Komponen, "id">, imageFile: File | null) => void;
   onCancel: () => void;
 };
-
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const MAX_SIZE = 2 * 1024 * 1024; // 2 MB
 
 export default function ComponentForm({ onSubmit, onCancel }: ComponentFormProps) {
   const [name, setName] = useState("");
@@ -18,45 +16,7 @@ export default function ComponentForm({ onSubmit, onCancel }: ComponentFormProps
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [inputKey, setInputKey] = useState(0); // untuk mengosongkan input file
   const [error, setError] = useState("");
-
-  // Bersihkan alamat sementara pratinjau saat diganti atau form ditutup
-  useEffect(() => {
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
-  }, [preview]);
-
-  function clearImage() {
-    setImageFile(null);
-    setPreview(null);
-    setInputKey((k) => k + 1);
-  }
-
-  function handleFile(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0] ?? null;
-    setError("");
-
-    if (!file) {
-      clearImage();
-      return;
-    }
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      setError("Foto harus berformat JPG, PNG, atau WEBP.");
-      clearImage();
-      return;
-    }
-    if (file.size > MAX_SIZE) {
-      setError("Ukuran foto maksimal 2 MB.");
-      clearImage();
-      return;
-    }
-
-    setImageFile(file);
-    setPreview(URL.createObjectURL(file));
-  }
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -128,28 +88,8 @@ export default function ComponentForm({ onSubmit, onCancel }: ComponentFormProps
         placeholder="40"
       />
 
-      <label className={styles.fLabel} htmlFor="kImage">Foto (opsional)</label>
-      <input
-        key={inputKey}
-        id="kImage"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        className={styles.fInput}
-        onChange={handleFile}
-      />
-      {preview && (
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={preview}
-            alt="Pratinjau foto komponen"
-            style={{ width: 96, height: 96, objectFit: "cover", borderRadius: 12 }}
-          />
-          <button type="button" className={styles.btnGhost} onClick={clearImage}>
-            Hapus foto
-          </button>
-        </div>
-      )}
+      <label className={styles.fLabel}>Foto (opsional)</label>
+      <ImageEnhancer onChange={setImageFile} />
 
       {error && <p className={styles.fError}>{error}</p>}
 

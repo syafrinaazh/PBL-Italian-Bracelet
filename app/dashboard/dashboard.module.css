@@ -132,16 +132,34 @@
 .mHead h3 { margin: 0; font-size: 18px; }
 
 .mClose {
+  position: relative;
   background: #f5ece9;
   border: none;
   width: 34px;
   height: 34px;
+  padding: 0;
   border-radius: 50%;
-  font-size: 22px;
-  line-height: 1;
-  color: #5a3a32;
+  font-size: 0;          /* sembunyikan karakter × kalau masih ada */
   cursor: pointer;
 }
+
+/* dua garis menyilang, dipusatkan persis di tengah */
+.mClose::before,
+.mClose::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 2px;
+  border-radius: 2px;
+  background: #5a3a32;
+}
+.mClose::before { transform: translate(-50%, -50%) rotate(45deg); }
+.mClose::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* kalau di Modal.tsx sudah memakai SVG, sembunyikan supaya tidak dobel */
+.mClose svg { display: none; }
 
 .mDetail { display: flex; flex-direction: column; gap: 4px; }
 .mDetail h4 { margin: 16px 0 6px; font-size: 15px; }
